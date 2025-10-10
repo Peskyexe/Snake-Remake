@@ -26,10 +26,10 @@ pygame.display.set_caption("Snake")
 
 # Function that generates the grid based on settings
 def generate_grid():
-    x_size, y_size = settings.grid_size[0], settings.grid_size[1]
+    grid_width, grid_height = settings.grid_size[0], settings.grid_size[1]
 
-    for x in range(x_size):
-        for y in range(y_size):
+    for x in range(grid_width):
+        for y in range(grid_height):
             grid_position_x = grid_start_postion_x + x * settings.GRID_SQUARE_SIZE
             grid_position_y = grid_start_positon_y + y * settings.GRID_SQUARE_SIZE
 
@@ -55,13 +55,15 @@ while running:
     pygame.draw.rect(
         screen,
         settings.color_theme[3],
-        (corner_x, corner_y, game_width, game_height))
+        (corner_x, corner_y, game_width, game_height)
+        )
     
     # Grid border
     pygame.draw.rect(
         screen, 
         settings.color_theme[2], 
-        (corner_x, corner_y + settings.INFO_BAR_HEIGHT, game_width, game_height - settings.INFO_BAR_HEIGHT)) 
+        (corner_x, corner_y + settings.INFO_BAR_HEIGHT, game_width, game_height - settings.INFO_BAR_HEIGHT)
+        ) 
 
     generate_grid()
 
