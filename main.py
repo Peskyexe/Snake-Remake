@@ -1,9 +1,10 @@
 import pygame
+from pygame.math import Vector2
 import settings
-import snake
+import snake_temp
 
 pygame.init()
-snake = snake.Snake()
+snake = snake_temp.Snake()
 clock = pygame.time.Clock()
 
 # Gets the size of your screen for the pygame window
@@ -80,7 +81,7 @@ while running:
         ) 
 
     generate_grid()
-    snake.draw(screen)
+    snake.draw(screen, Vector2(grid_start_postion_x, grid_start_positon_y))
 
     pygame.display.flip()
 

@@ -12,7 +12,7 @@ INFO_BAR_HEIGHT = 90
 FRUIT_1_VALUE = 1
 FRUIT_2_VALUE = 3
 
-SNAKE_SPEED = 6 
+SNAKE_SPEED = 150 # 6
 
 color_theme = GREEN_THEME
 grid_size = (17, 15) # Grid height should always be an odd number to make sure the snake spawns in the middle
