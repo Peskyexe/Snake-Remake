@@ -1,8 +1,10 @@
 import pygame
 import settings
-import time
+import snake
 
 pygame.init()
+snake = snake.Snake()
+clock = pygame.time.Clock()
 
 # Gets the size of your screen for the pygame window
 screen_info = pygame.display.Info()
@@ -47,9 +49,21 @@ def generate_grid():
 
 running = True
 while running:
+    delta_time = clock.tick(60) / 1000  # Time in seconds since last frame (60 FPS cap)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False 
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                snake.turn(pygame.math.Vector2(0, -1))
+            elif event.key == pygame.K_DOWN:
+                snake.turn(pygame.math.Vector2(0, 1))
+            elif event.key == pygame.K_LEFT:
+                snake.turn(pygame.math.Vector2(-1, 0))
+            elif event.key == pygame.K_RIGHT:
+                snake.turn(pygame.math.Vector2(1, 0)) 
+
+    snake.update(delta_time)
 
     # Info bar
     pygame.draw.rect(
@@ -66,6 +80,7 @@ while running:
         ) 
 
     generate_grid()
+    snake.draw(screen)
 
     pygame.display.flip()
 
