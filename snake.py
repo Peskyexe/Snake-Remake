@@ -19,11 +19,16 @@ class Snake:
 
     def update(self, delta_time):
         # Move the snake center in real (pixel) space
-        self.real_pos = self.real_pos + settings.SNAKE_SPEED * self.direction * delta_time
+        if not self.is_dead:
+            self.real_pos = self.real_pos + settings.SNAKE_SPEED * self.direction * delta_time
 
         # Update grid cell position (integer cell coordinates) based on center
         self.grid_pos.x = int(self.real_pos.x // settings.GRID_SQUARE_SIZE)
         self.grid_pos.y = int(self.real_pos.y // settings.GRID_SQUARE_SIZE)
+
+        if self.grid_pos.x < 0 or self.grid_pos.x >= settings.grid_size[0] or \
+           self.grid_pos.y < 0 or self.grid_pos.y >= settings.grid_size[1]:
+            self.is_dead = True
 
         # Compute relative position inside the current grid square in pixels (from top-left)
         cell_origin = self.grid_pos * settings.GRID_SQUARE_SIZE
@@ -68,3 +73,12 @@ class Snake:
             (0, 255, 0),
             (top_left.x, top_left.y, settings.GRID_SQUARE_SIZE, settings.GRID_SQUARE_SIZE)
         )
+
+    def reset(self):
+        self.grid_pos = Vector2(settings.grid_size[0] // 2, settings.grid_size[1] // 2)
+        half = settings.GRID_SQUARE_SIZE / 2
+        self.real_pos = self.grid_pos * settings.GRID_SQUARE_SIZE + Vector2(half, half)
+        self.relative_pos = Vector2(0, 0)
+        self.direction =  Vector2(1, 0)
+        self.turn_buffer = None
+        self.is_dead = False

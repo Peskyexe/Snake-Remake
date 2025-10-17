@@ -74,10 +74,12 @@ while running:
     relative_text = font.render(f"Relative pos: {snake.relative_pos.x:.2f}, {snake.relative_pos.y:.2f}", False, (255, 255, 255))
     real_text = font.render(f"Real pos: {snake.real_pos.x:.2f}, {snake.real_pos.y:.2f}", False, (255, 255, 255))
     grid_text = font.render(f"Grid pos: {snake.grid_pos.x}, {snake.grid_pos.y}", False, (255, 255, 255))
+    dead_text = font.render(f"Dead: {snake.is_dead}", False, (255, 0, 0))
 
-    screen.blit(relative_text, (10, 10))
-    screen.blit(real_text, (10, 10 + relative_text.get_height()))
-    screen.blit(grid_text, (10, real_text.get_height() + relative_text.get_height() + 10))
+    screen.blit(relative_text, (20, 10))
+    screen.blit(real_text, (20, 10 + relative_text.get_height()))
+    screen.blit(grid_text, (20, (10 + relative_text.get_height() + real_text.get_height())))
+    screen.blit(dead_text, (20, (10 + relative_text.get_height() + real_text.get_height() + grid_text.get_height())))
 
 
     # Info bar
