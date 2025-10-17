@@ -2,13 +2,16 @@ import pygame
 from pygame.math import Vector2
 import settings
 import snake
+import score_controller
 
 pygame.init()
 pygame.font.init()
 
 font = pygame.font.SysFont('Arial', 25)
-snake = snake.Snake()
 clock = pygame.time.Clock()
+
+snake = snake.Snake()
+score_ctrl = score_controller.ScoreController()
 
 # Gets the size of your screen for the pygame window
 screen_info = pygame.display.Info()
@@ -70,17 +73,19 @@ while running:
     screen.fill((0, 0, 0))
 
     snake.update(delta_time)
+    score_ctrl.update(delta_time, snake)
 
     relative_text = font.render(f"Relative pos: {snake.relative_pos.x:.2f}, {snake.relative_pos.y:.2f}", False, (255, 255, 255))
     real_text = font.render(f"Real pos: {snake.real_pos.x:.2f}, {snake.real_pos.y:.2f}", False, (255, 255, 255))
     grid_text = font.render(f"Grid pos: {snake.grid_pos.x}, {snake.grid_pos.y}", False, (255, 255, 255))
     dead_text = font.render(f"Dead: {snake.is_dead}", False, (255, 0, 0))
+    score_text = font.render(f"Score: {score_ctrl.score}", False, (255, 255, 0))
 
     screen.blit(relative_text, (20, 10))
     screen.blit(real_text, (20, 10 + relative_text.get_height()))
     screen.blit(grid_text, (20, (10 + relative_text.get_height() + real_text.get_height())))
     screen.blit(dead_text, (20, (10 + relative_text.get_height() + real_text.get_height() + grid_text.get_height())))
-
+    screen.blit(score_text, (20, (10 + relative_text.get_height() + real_text.get_height() + grid_text.get_height() + dead_text.get_height())))
 
     # Info bar
     pygame.draw.rect(
@@ -98,6 +103,8 @@ while running:
 
     generate_grid()
     snake.draw(screen, Vector2(grid_start_postion_x, grid_start_positon_y))
+    score_ctrl.draw(screen)
+    
 
     pygame.display.flip()
 
