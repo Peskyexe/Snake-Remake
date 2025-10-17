@@ -1,10 +1,13 @@
 import pygame
 from pygame.math import Vector2
 import settings
-import snake_temp
+import snake
 
 pygame.init()
-snake = snake_temp.Snake()
+pygame.font.init()
+
+font = pygame.font.SysFont('Arial', 25)
+snake = snake.Snake()
 clock = pygame.time.Clock()
 
 # Gets the size of your screen for the pygame window
@@ -64,7 +67,18 @@ while running:
             elif event.key == pygame.K_RIGHT:
                 snake.turn(pygame.math.Vector2(1, 0)) 
 
+    screen.fill((0, 0, 0))
+
     snake.update(delta_time)
+
+    relative_text = font.render(f"Relative pos: {snake.relative_pos.x:.2f}, {snake.relative_pos.y:.2f}", False, (255, 255, 255))
+    real_text = font.render(f"Real pos: {snake.real_pos.x:.2f}, {snake.real_pos.y:.2f}", False, (255, 255, 255))
+    grid_text = font.render(f"Grid pos: {snake.grid_pos.x}, {snake.grid_pos.y}", False, (255, 255, 255))
+
+    screen.blit(relative_text, (10, 10))
+    screen.blit(real_text, (10, 10 + relative_text.get_height()))
+    screen.blit(grid_text, (10, real_text.get_height() + relative_text.get_height() + 10))
+
 
     # Info bar
     pygame.draw.rect(
