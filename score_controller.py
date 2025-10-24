@@ -87,3 +87,10 @@ class ScoreController:
         # offset: Vector2 pixel offset for where the grid starts on the screen
         for f in self.fruits:
             f.draw(screen, offset)
+
+    def reset(self):
+        """Reset score controller state: score, timers and active fruits."""
+        self.score = 0
+        self._timer_f1 = 0.0
+        self._timer_f2 = 0.0
+        self.fruits = []

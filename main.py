@@ -12,6 +12,7 @@ clock = pygame.time.Clock()
 
 player = snake.Snake()
 score_ctrl = ScoreController()
+button_rect = None
 
 # Gets the size of your screen for the pygame window
 screen_info = pygame.display.Info()
@@ -56,6 +57,32 @@ def generate_grid():
             )
 
 
+def restart_popup():
+    # draw a semi-transparent overlay
+    overlay = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))
+    screen.blit(overlay, (0, 0))
+
+    # draw centered restart button
+    button_w, button_h = 260, 72
+    bx = int((screen_width - button_w) / 2)
+    by = int((screen_height - button_h) / 2)
+    button_rect = pygame.Rect(bx, by, button_w, button_h)
+    pygame.draw.rect(screen, settings.color_theme[1], button_rect)
+    pygame.draw.rect(screen, settings.color_theme[2], button_rect, 4)
+
+    # text
+    text = font.render("Restart", True, (255, 255, 255))
+    tx = bx + int((button_w - text.get_width()) / 2)
+    ty = by + int((button_h - text.get_height()) / 2)
+    screen.blit(text, (tx, ty))
+
+    return button_rect
+
+def restart():
+    player.reset()
+    score_ctrl.reset()
+
 running = True
 while running:
     delta_time = clock.tick(60) / 1000  # Time in seconds since last frame (60 FPS cap)
@@ -63,19 +90,27 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                player.turn(pygame.math.Vector2(0, -1))
-            elif event.key == pygame.K_DOWN:
-                player.turn(pygame.math.Vector2(0, 1))
-            elif event.key == pygame.K_LEFT:
-                player.turn(pygame.math.Vector2(-1, 0))
-            elif event.key == pygame.K_RIGHT:
-                player.turn(pygame.math.Vector2(1, 0)) 
+            if not player.is_dead:
+                if event.key == pygame.K_UP:
+                    player.turn(Vector2(0, -1))
+                elif event.key == pygame.K_DOWN:
+                    player.turn(Vector2(0, 1))
+                elif event.key == pygame.K_LEFT:
+                    player.turn(Vector2(-1, 0))
+                elif event.key == pygame.K_RIGHT:
+                    player.turn(Vector2(1, 0))
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # if dead and the restart button is visible, clicking it restarts
+            if player.is_dead and button_rect is not None:
+                mouse_pos = pygame.mouse.get_pos()
+                if button_rect.collidepoint(mouse_pos):
+                    restart()
 
     screen.fill((0, 0, 0))
 
     player.update(delta_time)
     score_ctrl.update(delta_time, player)
+    
 
     relative_text = font.render(f"Relative pos: {player.relative_pos.x:.2f}, {player.relative_pos.y:.2f}", False, (255, 255, 255))
     real_text = font.render(f"Real pos: {player.real_pos.x:.2f}, {player.real_pos.y:.2f}", False, (255, 255, 255))

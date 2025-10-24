@@ -79,8 +79,9 @@ class Snake:
             # if path not long enough, return oldest point
             return Vector2(self._path[0])
 
-        # check for collision: if any segment occupies same grid cell as head
-        for i in range(self.segment_count):
+        # check for collision: ignore the first segment directly behind the head (allow tight turns)
+        # start checking from the second segment (index 1)
+        for i in range(1, self.segment_count):
             dist = (i+1) * settings.GRID_SQUARE_SIZE
             seg_pos = _get_pos_at_distance(dist)
             seg_grid_x = int(seg_pos.x // settings.GRID_SQUARE_SIZE)
