@@ -2,7 +2,7 @@ import pygame
 from pygame.math import Vector2
 import settings
 import snake
-import score_controller
+from score_controller import ScoreController
 
 pygame.init()
 pygame.font.init()
@@ -10,8 +10,8 @@ pygame.font.init()
 font = pygame.font.SysFont('Arial', 25)
 clock = pygame.time.Clock()
 
-snake = snake.Snake()
-score_ctrl = score_controller.ScoreController()
+player = snake.Snake()
+score_ctrl = ScoreController()
 
 # Gets the size of your screen for the pygame window
 screen_info = pygame.display.Info()
@@ -26,8 +26,8 @@ corner_x = screen_width / 2 - game_width / 2
 corner_y = screen_height / 2 - game_height / 2
 
 # Calculates where the grid is going to start 
-grid_start_postion_x = corner_x + settings.BORDER_THICKNESS
-grid_start_positon_y = corner_y + settings.BORDER_THICKNESS + settings.INFO_BAR_HEIGHT
+grid_start_position_x = corner_x + settings.BORDER_THICKNESS
+grid_start_position_y = corner_y + settings.BORDER_THICKNESS + settings.INFO_BAR_HEIGHT
 
 # Sets the pygame window size based on previously gathered values
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -36,11 +36,13 @@ pygame.display.set_caption("Snake")
 # Function that generates the grid based on settings
 def generate_grid():
     grid_width, grid_height = settings.grid_size[0], settings.grid_size[1]
+    base_x = grid_start_position_x
+    base_y = grid_start_position_y
 
     for x in range(grid_width):
         for y in range(grid_height):
-            grid_position_x = grid_start_postion_x + x * settings.GRID_SQUARE_SIZE
-            grid_position_y = grid_start_positon_y + y * settings.GRID_SQUARE_SIZE
+            cell_x = base_x + x * settings.GRID_SQUARE_SIZE
+            cell_y = base_y + y * settings.GRID_SQUARE_SIZE
 
             if (x + y) % 2 == 0:
                 i = 0
@@ -50,7 +52,7 @@ def generate_grid():
             pygame.draw.rect(
                 screen,
                 settings.color_theme[i],
-                (grid_position_x, grid_position_y, settings.GRID_SQUARE_SIZE, settings.GRID_SQUARE_SIZE),
+                (cell_x, cell_y, settings.GRID_SQUARE_SIZE, settings.GRID_SQUARE_SIZE),
             )
 
 
@@ -62,23 +64,23 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                snake.turn(pygame.math.Vector2(0, -1))
+                player.turn(pygame.math.Vector2(0, -1))
             elif event.key == pygame.K_DOWN:
-                snake.turn(pygame.math.Vector2(0, 1))
+                player.turn(pygame.math.Vector2(0, 1))
             elif event.key == pygame.K_LEFT:
-                snake.turn(pygame.math.Vector2(-1, 0))
+                player.turn(pygame.math.Vector2(-1, 0))
             elif event.key == pygame.K_RIGHT:
-                snake.turn(pygame.math.Vector2(1, 0)) 
+                player.turn(pygame.math.Vector2(1, 0)) 
 
     screen.fill((0, 0, 0))
 
-    snake.update(delta_time)
-    score_ctrl.update(delta_time, snake)
+    player.update(delta_time)
+    score_ctrl.update(delta_time, player)
 
-    relative_text = font.render(f"Relative pos: {snake.relative_pos.x:.2f}, {snake.relative_pos.y:.2f}", False, (255, 255, 255))
-    real_text = font.render(f"Real pos: {snake.real_pos.x:.2f}, {snake.real_pos.y:.2f}", False, (255, 255, 255))
-    grid_text = font.render(f"Grid pos: {snake.grid_pos.x}, {snake.grid_pos.y}", False, (255, 255, 255))
-    dead_text = font.render(f"Dead: {snake.is_dead}", False, (255, 0, 0))
+    relative_text = font.render(f"Relative pos: {player.relative_pos.x:.2f}, {player.relative_pos.y:.2f}", False, (255, 255, 255))
+    real_text = font.render(f"Real pos: {player.real_pos.x:.2f}, {player.real_pos.y:.2f}", False, (255, 255, 255))
+    grid_text = font.render(f"Grid pos: {player.grid_pos.x}, {player.grid_pos.y}", False, (255, 255, 255))
+    dead_text = font.render(f"Dead: {player.is_dead}", False, (255, 0, 0))
     score_text = font.render(f"Score: {score_ctrl.score}", False, (255, 255, 0))
 
     screen.blit(relative_text, (20, 10))
@@ -102,8 +104,8 @@ while running:
         ) 
 
     generate_grid()
-    snake.draw(screen, Vector2(grid_start_postion_x, grid_start_positon_y))
-    score_ctrl.draw(screen)
+    player.draw(screen, Vector2(grid_start_position_x, grid_start_position_y))
+    score_ctrl.draw(screen, Vector2(grid_start_position_x, grid_start_position_y))
     
 
     pygame.display.flip()
